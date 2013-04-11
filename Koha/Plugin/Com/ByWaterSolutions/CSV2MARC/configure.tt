@@ -1,0 +1,59 @@
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>Koha: CSV2MARC Plugin: Configuration</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; CSV2MARC &rsaquo; Configuration</div>
+
+<div id="doc3">
+    <!-- We can access our own plugins resource files using the PLUGIN_PATH variable. -->
+    <img src="[% PLUGIN_PATH %]/logo.png" />
+    <h3>Koha: CSV2MARC Plugin: Configuration</h3>
+
+    <!-- Notice our form here has no 'action', this is good, it means that our forms will always get passed back to 'plugins/run.pl'. You could hard code it instead if you prefer -->
+    <form method="get">
+        <!-- Always pass these two parameters so the plugin system knows what to execute! -->
+        <input type="hidden" name="class" value="[% CLASS %]"/>
+        <input type="hidden" name="method" value="[% METHOD %]"/>
+
+        [% IF error %]<div class="warn alert error">Error: [% error %]</div>[% END %]
+
+        <label for="mapping">Mapping: </label>
+        <textarea rows="15" cols="200" name="mapping">[% mapping %]</textarea>
+
+        <input type="hidden" name="save" value="1" />
+
+        <p>
+            <input type="submit" value="Save configuration" />
+        </p>
+
+    </form>
+
+    <div>
+        Add a line for each tag you'd like to create. In that tag you can have multiple subfields that should be created and the column index to be used.
+        <h3>Example:</h3>
+        <pre>
+020:
+  - subfield: c
+    column: 6
+  - subfield: a
+    column: 35
+100:
+  - subfield: a
+    column: 3
+245:
+  - subfield: a
+    column: 2
+260:
+  - subfield: b
+    column: 5
+  - subfield: c
+    column: 11
+        </pre>
+
+    </div>
+
+[% INCLUDE 'intranet-bottom.inc' %]
