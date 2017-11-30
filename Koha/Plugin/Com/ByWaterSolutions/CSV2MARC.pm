@@ -12,7 +12,7 @@ use MARC::Record;
 use Text::CSV;
 
 ## Here we set our plugin version
-our $VERSION = 2.00;
+our $VERSION = "{VERSION}";
 
 ## Here is our metadata, some keys are required, some are optional
 our $metadata = {
