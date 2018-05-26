@@ -34,6 +34,7 @@
 
     <div>
         Add a line for each tag you'd like to create. In that tag you can have multiple subfields that should be created and the column index to be used.
+        Repeatable fields require the use of underscore on the tag number as shown in this example configuration.
         <h3>Example:</h3>
         <pre>
 020:
@@ -56,6 +57,12 @@
     column: 7
   - subfield: c
     column: 11
+650_1:
+  - subfield: a
+    column: 12
+650_2:
+  - subfield: a
+    column: 13
         </pre>
 
     </div>

@@ -73,7 +73,14 @@ sub to_marc {
         my @fields;
 
         foreach my $field_name ( keys %$mappings ) {
+
+            # Read the mappings
             my $subfield_data = $mappings->{$field_name};
+
+            if ( $field_name =~ m/(?<field_name>\d\d\d)_.*/ ) {
+                # multiple occurences use case, fix the field name
+                $field_name = $+{field_name};
+            }
 
             my $ind1 = ' ';
             my $ind2 = ' ';
