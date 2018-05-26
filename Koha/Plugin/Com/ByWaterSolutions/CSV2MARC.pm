@@ -81,7 +81,7 @@ sub to_marc {
                 %$subfields
             );
 
-            $record->append_fields($field);
+            $record->insert_fields_ordered($field);
         }
 
         $batch .= $record->as_usmarc() . "\x1D";
