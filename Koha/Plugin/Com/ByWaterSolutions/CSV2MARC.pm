@@ -57,7 +57,7 @@ sub to_marc {
     eval { $mapping = YAML::Load( $self->retrieve_data('mapping') . "\n\n" ); };
     die($@) if $@;
 
-    my $csv = Text::CSV->new()    # should set binary attribute.
+    my $csv = Text::CSV->new({ binary => 1 }) # binary to support characters above 0x7e (tilde)
       or die "Cannot use CSV: " . Text::CSV->error_diag();
 
     my @lines = split(/\n/, $args->{data} );
