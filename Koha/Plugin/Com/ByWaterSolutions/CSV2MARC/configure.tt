@@ -47,9 +47,13 @@
 245:
   - subfield: a
     column: 2
+  - indicator: 1
+    column: 4
+  - indicator: 2
+    column 5
 260:
   - subfield: b
-    column: 5
+    column: 7
   - subfield: c
     column: 11
         </pre>
