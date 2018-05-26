@@ -133,7 +133,7 @@ sub configure {
     else {
         $self->store_data(
             {
-                mapping            => $cgi->param('mapping'),
+                mapping            => scalar $cgi->param('mapping'),
                 last_configured_by => C4::Context->userenv->{'number'},
             }
         );
