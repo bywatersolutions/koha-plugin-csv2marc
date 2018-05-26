@@ -53,8 +53,8 @@ sub new {
 sub to_marc {
     my ( $self, $args ) = @_;
 
-    my $mapping;
-    eval { $mapping = YAML::Load( $self->retrieve_data('mapping') . "\n\n" ); };
+    my $mappings;
+    eval { $mappings = YAML::Load( $self->retrieve_data('mapping') . "\n\n" ); };
     die($@) if $@;
 
     my $csv = Text::CSV->new({ binary => 1 }) # binary to support characters above 0x7e (tilde)
@@ -70,19 +70,35 @@ sub to_marc {
         my @columns = $csv->fields();
         my $row = \@columns;
 
-        foreach my $field_name ( keys %$mapping ) {
-            my $subfield_data = $mapping->{$field_name};
+        my @fields;
 
-            my $subfields;
-            map { $subfields->{ $_->{subfield} } = $row->[ $_->{column} ] } @$subfield_data;
+        foreach my $field_name ( keys %$mappings ) {
+            my $subfield_data = $mappings->{$field_name};
 
-            my $field = MARC::Field->new(
-                $field_name, ' ', ' ',    #TODO add indicator support
-                %$subfields
+            my $ind1 = ' ';
+            my $ind2 = ' ';
+            my @subfields;
+
+            foreach my $mapping ( @{$subfield_data} ) {
+                if ( exists $mapping->{indicator} ) {
+                    $ind1 = $row->[ $mapping->{column} ]
+                        if $mapping->{indicator} == 1;
+                    $ind2 = $row->[ $mapping->{column} ]
+                        if $mapping->{indicator} == 2;
+                }
+                else {
+                    push @subfields, $mapping->{subfield} => $row->[ $mapping->{column} ]
+                        if exists $mapping->{subfield};
+                }
+            }
+
+            push @fields, MARC::Field->new(
+                $field_name, $ind1, $ind2,
+                @subfields
             );
-
-            $record->insert_fields_ordered($field);
         }
+
+        $record->insert_fields_ordered(@fields);
 
         $batch .= $record->as_usmarc() . "\x1D";
     }
