@@ -84,7 +84,7 @@ sub to_marc {
 
             if ( $field_name + 0 < 10 ) {
                 # control field
-                my $control_field = $self->_handle_controlfield( $field_name, $subfield_data, $row );
+                my $control_field = $self->_handle_control_field( $field_name, $subfield_data, $row );
                 push @fields, $control_field;
             }
             else {
