@@ -85,7 +85,8 @@ sub to_marc {
             if ( $field_name + 0 < 10 ) {
                 # control field
                 my $control_field = $self->_handle_control_field( $field_name, $subfield_data, $row );
-                push @fields, $control_field;
+                push @fields, $control_field
+                    if $control_field;
             }
             else {
 
@@ -103,14 +104,12 @@ sub to_marc {
                     }
                     else {
                         push @subfields, $mapping->{subfield} => $row->[ $mapping->{column} ]
-                            if exists $mapping->{subfield};
+                            if exists $mapping->{subfield} && $row->[ $mapping->{column} ] ne '';
                     }
                 }
 
-                push @fields, MARC::Field->new(
-                    $field_name, $ind1, $ind2,
-                    @subfields
-                );
+                push @fields, MARC::Field->new( $field_name, $ind1, $ind2, @subfields )
+                    if @subfields;
             }
         }
 
@@ -127,7 +126,9 @@ sub _handle_control_field {
 
     my $column = $tag_mapping->[0]->{column};
 
-    my $field = MARC::Field->new( $tag, $row->[$column] );
+    return unless $row->[ $column ] ne '';
+
+    my $field = MARC::Field->new( $tag, $row->[ $column ] );
 
     return $field;
 }
