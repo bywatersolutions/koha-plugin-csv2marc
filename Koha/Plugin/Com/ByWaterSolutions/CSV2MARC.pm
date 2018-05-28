@@ -82,27 +82,36 @@ sub to_marc {
                 $field_name = $+{field_name};
             }
 
-            my $ind1 = ' ';
-            my $ind2 = ' ';
-            my @subfields;
-
-            foreach my $mapping ( @{$subfield_data} ) {
-                if ( exists $mapping->{indicator} ) {
-                    $ind1 = $row->[ $mapping->{column} ]
-                        if $mapping->{indicator} == 1;
-                    $ind2 = $row->[ $mapping->{column} ]
-                        if $mapping->{indicator} == 2;
-                }
-                else {
-                    push @subfields, $mapping->{subfield} => $row->[ $mapping->{column} ]
-                        if exists $mapping->{subfield};
-                }
+            if ( $field_name + 0 < 10 ) {
+                # control field
+                my $control_field = $self->_handle_controlfield( $field_name, $subfield_data, $row );
+                push @fields, $control_field;
             }
+            else {
 
-            push @fields, MARC::Field->new(
-                $field_name, $ind1, $ind2,
-                @subfields
-            );
+                my $ind1 = ' ';
+                my $ind2 = ' ';
+
+                my @subfields;
+
+                foreach my $mapping ( @{$subfield_data} ) {
+                    if ( exists $mapping->{indicator} ) {
+                        $ind1 = $row->[ $mapping->{column} ]
+                            if $mapping->{indicator} == 1;
+                        $ind2 = $row->[ $mapping->{column} ]
+                            if $mapping->{indicator} == 2;
+                    }
+                    else {
+                        push @subfields, $mapping->{subfield} => $row->[ $mapping->{column} ]
+                            if exists $mapping->{subfield};
+                    }
+                }
+
+                push @fields, MARC::Field->new(
+                    $field_name, $ind1, $ind2,
+                    @subfields
+                );
+            }
         }
 
         $record->insert_fields_ordered(@fields);
@@ -111,6 +120,16 @@ sub to_marc {
     }
 
     return $batch;
+}
+
+sub _handle_control_field {
+    my ( $self, $tag, $tag_mapping, $row ) = @_;
+
+    my $column = $tag_mapping->[0]->{column};
+
+    my $field = MARC::Field->new( $tag, $row->[$column] );
+
+    return $field;
 }
 
 ## If your tool is complicated enough to needs it's own setting/configuration

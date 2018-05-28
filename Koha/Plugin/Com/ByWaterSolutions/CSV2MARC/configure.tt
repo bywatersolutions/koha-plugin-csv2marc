@@ -37,6 +37,8 @@
         Repeatable fields require the use of underscore on the tag number as shown in this example configuration.
         <h3>Example:</h3>
         <pre>
+003:
+  - column: 14
 020:
   - subfield: c
     column: 6
@@ -51,7 +53,7 @@
   - indicator: 1
     column: 4
   - indicator: 2
-    column 5
+    column: 5
 260:
   - subfield: b
     column: 7
