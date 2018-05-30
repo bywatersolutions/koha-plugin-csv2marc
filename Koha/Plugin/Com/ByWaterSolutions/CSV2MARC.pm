@@ -20,7 +20,7 @@ our $metadata = {
     author          => 'Kyle M Hall',
     description     => 'Import CSV File as MARC records',
     date_authored   => '2015-05-29',
-    date_updated    => '2015-05-29',
+    date_updated    => '2018-05-26',
     minimum_version => '3.20',
     maximum_version => undef,
     version         => $VERSION,
@@ -53,11 +53,11 @@ sub new {
 sub to_marc {
     my ( $self, $args ) = @_;
 
-    my $mapping;
-    eval { $mapping = YAML::Load( $self->retrieve_data('mapping') . "\n\n" ); };
+    my $mappings;
+    eval { $mappings = YAML::Load( $self->retrieve_data('mapping') . "\n\n" ); };
     die($@) if $@;
 
-    my $csv = Text::CSV->new()    # should set binary attribute.
+    my $csv = Text::CSV->new({ binary => 1 }) # binary to support characters above 0x7e (tilde)
       or die "Cannot use CSV: " . Text::CSV->error_diag();
 
     my @lines = split(/\n/, $args->{data} );
@@ -70,24 +70,67 @@ sub to_marc {
         my @columns = $csv->fields();
         my $row = \@columns;
 
-        foreach my $field_name ( keys %$mapping ) {
-            my $subfield_data = $mapping->{$field_name};
+        my @fields;
 
-            my $subfields;
-            map { $subfields->{ $_->{subfield} } = $row->[ $_->{column} ] } @$subfield_data;
+        foreach my $field_name ( keys %$mappings ) {
 
-            my $field = MARC::Field->new(
-                $field_name, ' ', ' ',    #TODO add indicator support
-                %$subfields
-            );
+            # Read the mappings
+            my $subfield_data = $mappings->{$field_name};
 
-            $record->append_fields($field);
+            if ( $field_name =~ m/(?<field_name>\d\d\d)_.*/ ) {
+                # multiple occurences use case, fix the field name
+                $field_name = $+{field_name};
+            }
+
+            if ( $field_name + 0 < 10 ) {
+                # control field
+                my $control_field = $self->_handle_control_field( $field_name, $subfield_data, $row );
+                push @fields, $control_field
+                    if $control_field;
+            }
+            else {
+
+                my $ind1 = ' ';
+                my $ind2 = ' ';
+
+                my @subfields;
+
+                foreach my $mapping ( @{$subfield_data} ) {
+                    if ( exists $mapping->{indicator} ) {
+                        $ind1 = $row->[ $mapping->{column} ]
+                            if $mapping->{indicator} == 1;
+                        $ind2 = $row->[ $mapping->{column} ]
+                            if $mapping->{indicator} == 2;
+                    }
+                    else {
+                        push @subfields, $mapping->{subfield} => $row->[ $mapping->{column} ]
+                            if exists $mapping->{subfield} && $row->[ $mapping->{column} ] ne '';
+                    }
+                }
+
+                push @fields, MARC::Field->new( $field_name, $ind1, $ind2, @subfields )
+                    if @subfields;
+            }
         }
+
+        $record->insert_fields_ordered(@fields);
 
         $batch .= $record->as_usmarc() . "\x1D";
     }
 
     return $batch;
+}
+
+sub _handle_control_field {
+    my ( $self, $tag, $tag_mapping, $row ) = @_;
+
+    my $column = $tag_mapping->[0]->{column};
+
+    return unless $row->[ $column ] ne '';
+
+    my $field = MARC::Field->new( $tag, $row->[ $column ] );
+
+    return $field;
 }
 
 ## If your tool is complicated enough to needs it's own setting/configuration
@@ -110,7 +153,7 @@ sub configure {
     else {
         $self->store_data(
             {
-                mapping            => $cgi->param('mapping'),
+                mapping            => scalar $cgi->param('mapping'),
                 last_configured_by => C4::Context->userenv->{'number'},
             }
         );
