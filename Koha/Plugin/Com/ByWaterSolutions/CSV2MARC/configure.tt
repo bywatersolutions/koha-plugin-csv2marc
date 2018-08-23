@@ -39,6 +39,15 @@
         <pre>
 003:
   - column: 14
+008:
+  - column: 15
+    position: 6
+  - column: 16
+    position: 7
+  - column: 17
+    position: 15
+  - column: 18
+    position: 35
 020:
   - subfield: c
     column: 6

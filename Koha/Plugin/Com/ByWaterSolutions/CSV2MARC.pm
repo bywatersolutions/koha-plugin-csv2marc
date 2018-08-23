@@ -26,6 +26,18 @@ our $metadata = {
     version         => $VERSION,
 };
 
+our $fixed_length_size = {
+    '000' => 24,
+    '006' => 18,
+    '008' => 40
+};
+
+our $fixed_length_empty = {
+    '000' => ' 'x$fixed_length_size->{'000'},
+    '006' => ' 'x$fixed_length_size->{'006'},
+    '008' => ' 'x$fixed_length_size->{'008'}
+};
+
 ## This is the minimum code required for a plugin's 'new' method
 ## More can be added, but none should be removed
 sub new {
@@ -124,13 +136,28 @@ sub to_marc {
 sub _handle_control_field {
     my ( $self, $tag, $tag_mapping, $row ) = @_;
 
-    my $column = $tag_mapping->[0]->{column};
+    my $basis = $fixed_length_empty->{$tag} // q{};
 
-    return unless $row->[ $column ] ne '';
+    # look for a basis
+    foreach my $mapping ( @{$tag_mapping} ) {
+        # no 'position', then assume is the basis to work on
+        if ( !exists $mapping->{position} ) {
+            $basis = $row->[ $mapping->{column} ];
+            last;
+        }
+    }
 
-    my $field = MARC::Field->new( $tag, $row->[ $column ] );
+    # apply offsets
+    foreach my $mapping ( @{$tag_mapping} ) {
+        # no 'position', then assume is the basis to work on
+        if (exists $mapping->{position} ) {
+            my $offset = $mapping->{position};
+            my $offset_value = $row->[ $mapping->{column} ];
+            substr( $basis, $offset, length($offset_value) ) = $offset_value;
+        }
+    }
 
-    return $field;
+    return MARC::Field->new( $tag, $basis );
 }
 
 ## If your tool is complicated enough to needs it's own setting/configuration
