@@ -97,8 +97,16 @@ sub to_marc {
             if ( $field_name + 0 < 10 ) {
                 # control field
                 my $control_field = $self->_handle_control_field( $field_name, $subfield_data, $row );
-                push @fields, $control_field
-                    if $control_field;
+                if ( $field_name + 0 > 0 ) {
+                    # not the leader
+                    push @fields, MARC::Field->new( $field_name, $control_field )
+                        if $control_field;
+                }
+                else {
+                    # the leader
+                    $record->leader( $control_field )
+                        if $control_field;
+                }
             }
             else {
 
@@ -157,7 +165,7 @@ sub _handle_control_field {
         }
     }
 
-    return MARC::Field->new( $tag, $basis );
+    return $basis;
 }
 
 ## If your tool is complicated enough to needs it's own setting/configuration
