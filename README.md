@@ -1,14 +1,14 @@
 # Introduction
 
-Koha’s Plugin System (available in Koha 3.12+) allows for you to add additional tools and reports to [Koha](http://koha-community.org) that are specific to your library. Plugins are installed by uploading KPZ ( Koha Plugin Zip ) packages. A KPZ file is just a zip file containing the perl files, template files, and any other files necessary to make the plugin work. Learn more about the Koha Plugin System in the [Koha 3.22 Manual](http://manual.koha-community.org/3.22/en/pluginsystem.html) or watch [Kyle’s tutorial video](http://bywatersolutions.com/2013/01/23/koha-plugin-system-coming-soon/).
+This plugin allows the MARC stage step to allow importing MARC records from CSV files.
 
-# Downloading
+# Adding the plugin to Koha
 
-From the [release page](https://github.com/bywatersolutions/koha-plugin-csv2marc/releases) you can download the relevant *.kpz file
+## Download the plugin installer
 
-# Installing
+In order to install this plugin, you need to download the _.kpz_ file from the [release page](https://github.com/bywatersolutions/koha-plugin-csv2marc/releases).
 
-Koha's Plugin System allows for you to add additional tools and reports to Koha that are specific to your library. Plugins are installed by uploading KPZ ( Koha Plugin Zip ) packages. A KPZ file is just a zip file containing the perl files, template files, and any other files necessary to make the plugin work.
+## Enable the plugin system
 
 The plugin system needs to be turned on by a system administrator.
 
@@ -16,6 +16,67 @@ To set up the Koha plugin system you must first make some changes to your instal
 
 * Change `<enable_plugins>0<enable_plugins>` to `<enable_plugins>1</enable_plugins>` in your koha-conf.xml file
 * Confirm that the path to `<pluginsdir>` exists, is correct, and is writable by the web server
-* Restart your webserver
+* Restart Koha:
 
-Once set up is complete you will need to alter your UseKohaPlugins system preference. On the Tools page you will see the Tools Plugins and on the Reports page you will see the Reports Plugins.
+```
+  $ sudo service koha-common restart
+```
+
+Once set up is complete you will need to alter your UseKohaPlugins system preference.
+
+## Install
+
+In _Home > Administration > Manage plugins_ you will find the option to upload the downloaded _.kpz_ file.
+
+## Upgrade
+
+If you want to install a newer version of the plugin, just repeat the install step with the newer _.kpz_ file.
+
+# Usage
+
+On the plugin configuration page, you will find a form in which you need to add your mappings before using the plugin.
+
+Add a line for each tag you'd like to create. In that tag you can have multiple subfields that should be created and the column index to be used.
+
+Repeatable fields require the use of underscore on the tag number as shown in this example configuration.
+
+Control fields are supported! It is recommended that you put a default value for the control field in a column (configured as position 0), and then define the positions mappings. See _000_ in the example below.
+
+## Example
+
+```
+000:
+  - column: 1
+    position: 0
+  - column: 2
+    position: 7
+  - column: 3
+    position: 15
+003:
+  - column: 4
+008:
+  - column: 5
+    position: 6
+  - column: 6
+    position: 7
+  - column: 7
+    position: 15
+  - column: 8
+    position: 35
+100:
+  - subfield: a
+    column: 9
+245:
+  - indicator: 1
+    column: 10
+  - indicator: 2
+    column: 11
+  - subfield: a
+    column: 12
+650_1:
+  - subfield: a
+    column: 13
+650_2:
+  - subfield: a
+    column: 14
+```
