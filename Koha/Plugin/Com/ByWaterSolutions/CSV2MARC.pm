@@ -114,8 +114,10 @@ sub to_marc {
                 my $ind2 = ' ';
 
                 my @subfields;
+                my $required_subfield_missing = 0;
 
                 foreach my $mapping ( @{$subfield_data} ) {
+
                     if ( exists $mapping->{indicator} ) {
                         $ind1 = $row->[ $mapping->{column} ]
                             if $mapping->{indicator} == 1;
@@ -123,13 +125,27 @@ sub to_marc {
                             if $mapping->{indicator} == 2;
                     }
                     else {
-                        push @subfields, $mapping->{subfield} => $row->[ $mapping->{column} ]
-                            if exists $mapping->{subfield} && $row->[ $mapping->{column} ] ne '';
+                        if ( exists $mapping->{subfield} && $row->[ $mapping->{column} ] ne '' ) {
+                            push @subfields, $mapping->{subfield} => $row->[ $mapping->{column} ];
+                        }
+                        else {
+                            if ( exists $mapping->{required} and $mapping->{required} ) {
+                                # subfield marked as required is missing or empty
+                                # let the code know this field needs to be skipped
+                                $required_subfield_missing = 1;
+                                # stop processing the field
+                                last;
+                            }
+                        }
                     }
                 }
 
-                push @fields, MARC::Field->new( $field_name, $ind1, $ind2, @subfields )
-                    if @subfields;
+                unless ( $required_subfield_missing ) {
+                    # there's no required field missing. this
+                    # catches partially created records (with some subfields)
+                    push @fields, MARC::Field->new( $field_name, $ind1, $ind2, @subfields )
+                        if @subfields;
+                }
             }
         }
 
