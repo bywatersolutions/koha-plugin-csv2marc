@@ -38,7 +38,7 @@ On the plugin configuration page, you will find a form in which you need to add 
 
 Add a line for each tag you'd like to create. In that tag you can have multiple subfields that should be created and the column index to be used.
 
-Repeatable fields require the use of underscore on the tag number as shown in this example configuration.
+Repeatable fields require the use of underscore on the tag number as shown in this example configuration. Notice the example makes 650s be created using the same columns several times (for indicators and source). Remember to add _required: true_ the not-reused subfield (the main heading in the example). This way only meaningful fields will be created (you will notice if you are dealing with multiple repeated fields).
 
 Control fields are supported! It is recommended that you put a default value for the control field in a column (configured as position 0), and then define the positions mappings. See _000_ in the example below.
 
@@ -74,9 +74,19 @@ Control fields are supported! It is recommended that you put a default value for
   - subfield: a
     column: 12
 650_1:
-  - subfield: a
+  - indicator: 2
     column: 13
-650_2:
-  - subfield: a
+  - subfield: 2
     column: 14
+  - subfield: a
+    column: 15
+    required: true
+650_2:
+  - indicator: 2
+    column: 13
+  - subfield: 2
+    column: 14
+  - subfield: a
+    column: 16
+    required: true
 ```
