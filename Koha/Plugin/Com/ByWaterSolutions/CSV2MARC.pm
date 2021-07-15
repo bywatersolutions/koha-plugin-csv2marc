@@ -76,6 +76,8 @@ sub to_marc {
 
     my $batch = q{};
     foreach my $line ( @lines ) {
+        $line =~ s/[\r\n]+$//; # Remove remaining line separators
+            
         my $record = MARC::Record->new();
 
         $csv->parse($line);
