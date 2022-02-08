@@ -1,20 +1,16 @@
 package Koha::Plugin::Com::ByWaterSolutions::CSV2MARC;
 
-## It's good practive to use Modern::Perl
 use Modern::Perl;
 
-## Required for all plugins
 use base qw(Koha::Plugins::Base);
 
-## We will also need to include any Koha libraries we want to access
+use JSON;
 use MARC::Batch;
 use MARC::Record;
 use Text::CSV;
 
-## Here we set our plugin version
 our $VERSION = "{VERSION}";
 
-## Here is our metadata, some keys are required, some are optional
 our $metadata = {
     name            => 'CSV2MARC plugin',
     author          => 'Kyle M Hall',
@@ -38,30 +34,17 @@ our $fixed_length_empty = {
     '008' => ' 'x$fixed_length_size->{'008'}
 };
 
-## This is the minimum code required for a plugin's 'new' method
-## More can be added, but none should be removed
 sub new {
     my ( $class, $args ) = @_;
 
-    ## We need to add our metadata here so our base class can access it
     $args->{'metadata'} = $metadata;
     $args->{'metadata'}->{'class'} = $class;
 
-    ## Here, we call the 'new' method for our base class
-    ## This runs some additional magic and checking
-    ## and returns our actual $self
     my $self = $class->SUPER::new($args);
 
     return $self;
 }
 
-## The existiance of a 'to_marc' subroutine means the plugin is capable
-## of converting some type of file to MARC for use from the stage records
-## for import tool
-##
-## This example takes a text file of the arbtrary format:
-## First name:Middle initial:Last name:Year of birth:Title
-## and converts each line to a very very basic MARC record
 sub to_marc {
     my ( $self, $args ) = @_;
 
@@ -186,10 +169,6 @@ sub _handle_control_field {
     return $basis;
 }
 
-## If your tool is complicated enough to needs it's own setting/configuration
-## you will want to add a 'configure' method to your plugin like so.
-## Here I am throwing all the logic into the 'configure' method, but it could
-## be split up like the 'report' method is.
 sub configure {
     my ( $self, $args ) = @_;
     my $cgi = $self->{'cgi'};
@@ -231,23 +210,6 @@ sub configure {
             }
         }
     }
-}
-
-## This is the 'install' method. Any database tables or other setup that should
-## be done when the plugin if first installed should be executed in this method.
-## The installation method should always return true if the installation succeeded
-## or false if it failed.
-sub install() {
-    my ( $self, $args ) = @_;
-
-    return 1;
-}
-
-## This method will be run just before the plugin files are deleted
-## when a plugin is uninstalled. It is good practice to clean up
-## after ourselves!
-sub uninstall() {
-    my ( $self, $args ) = @_;
 }
 
 sub static_routes {
