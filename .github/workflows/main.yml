@@ -159,6 +159,11 @@ jobs:
       run: |
         echo "Current oldstable version: ${{ steps.koha-version-oldstable.outputs.version-major-minor }}"
 
+    - name: Build static assets
+      run: |
+        echo "Current oldstable version: ${{ steps.koha-version-oldstable.outputs.version-major-minor }}"
+        docker run -v $PWD:/plugin registry.gitlab.com/thekesolutions/tools/koha-plugin-builder static
+
     - name: Dump myvars outputs
       env:
         GITHUB_CONTEXT: ${{ toJson(steps.myvars.outputs) }}
