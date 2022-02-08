@@ -28,7 +28,7 @@ const pm_bundle_path = path.join(pm_file_path, pm_name);
  * If no static files need to be served, set static_relative_path = []
  * 
  */
-const static_relative_path = ['static_files', 'datepicker'];
+const static_relative_path = ['static'];
 
 var static_absolute_path = [];
 
