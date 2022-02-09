@@ -8,6 +8,7 @@ use JSON;
 use MARC::Batch;
 use MARC::Record;
 use Text::CSV;
+use YAML;
 
 our $VERSION = "{VERSION}";
 
