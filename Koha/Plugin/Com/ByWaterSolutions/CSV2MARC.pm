@@ -17,8 +17,8 @@ our $metadata = {
     author          => 'Kyle M Hall',
     description     => 'Import CSV File as MARC records',
     date_authored   => '2015-05-29',
-    date_updated    => '2018-05-26',
-    minimum_version => '3.20',
+    date_updated    => '2024-10-16',
+    minimum_version => '24.05',
     maximum_version => undef,
     version         => $VERSION,
 };
@@ -173,6 +173,7 @@ sub _handle_control_field {
 sub configure {
     my ( $self, $args ) = @_;
     my $cgi = $self->{'cgi'};
+    my $op = $cgi->param('op');
 
     unless ( $cgi->param('save') ) {
         my $template = $self->get_template( { file => 'configure.tt' } );
@@ -183,7 +184,7 @@ sub configure {
         print $cgi->header();
         print $template->output();
     }
-    else {
+    elsif( $op eq 'cud-update-config' ) {
         $self->store_data(
             {
                 mapping            => scalar $cgi->param('mapping'),
