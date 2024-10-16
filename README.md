@@ -37,6 +37,7 @@ If you want to install a newer version of the plugin, just repeat the install st
 On the plugin configuration page, you will find a form in which you need to add your mappings before using the plugin.
 
 Add a line for each tag you'd like to create. In that tag you can have multiple subfields that should be created and the column index to be used.
+NOTE: Columns indexes begin at 0
 
 Repeatable fields require the use of underscore on the tag number as shown in this example configuration. Notice the example makes 650s be created using the same columns several times (for indicators and source). Remember to add _required: true_ the not-reused subfield (the main heading in the example). This way only meaningful fields will be created (you will notice if you are dealing with multiple repeated fields).
 
