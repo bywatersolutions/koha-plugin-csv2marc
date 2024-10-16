@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - main
     tags:
       - 'v*.*.*'
   schedule:
@@ -87,7 +87,7 @@ jobs:
         mkdir -p env
         wget -O env/defaults.env https://gitlab.com/koha-community/koha-testing-docker/raw/main/env/defaults.env
         cp env/defaults.env .env
-        docker-compose pull
+        docker compose pull
 #    - name: Setup Debug Session
 #      uses: csexton/debugger-action@master
 
@@ -95,7 +95,7 @@ jobs:
       run: |
         pwd
         ls -alh
-        docker-compose -f docker-compose.yml -p koha up --detach
+        docker compose -f docker-compose.yml -p koha up --detach
         cd ..
         pwd
         ls -alh
@@ -118,7 +118,7 @@ jobs:
         
     - name: Post test cleanup
       run: |
-        docker-compose down
+        docker compose down
         docker rm -f $(docker ps -a -f "name=koha_" -q)
         docker volume prune -f
         docker image  prune -f
@@ -171,7 +171,7 @@ jobs:
 
     - name: Build Koha Plugin kpz artifact
       id: kpz
-      uses: "bywatersolutions/github-action-koha-plugin-create-kpz@master"
+      uses: "bywatersolutions/github-action-koha-plugin-create-kpz@main"
       with:
         release-version: ${{ steps.myvars.outputs.tag_version }}
         release-name: ${{ steps.myvars.outputs.github_repo }}
