@@ -1,6 +1,6 @@
 {
   "name": "koha-plugin-csv2marc",
-  "version": "3.4.3",
+  "version": "3.4.4",
   "previous_version": "3.2.0",
   "description": "Koha CSV to MARC Plugin",
   "devDependencies": {
