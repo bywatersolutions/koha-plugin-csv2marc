@@ -1,5 +1,5 @@
-const gulp = require('gulp');
-const release = require('gulp-github-release');
+const { dest, series, src } = require('gulp');
+
 const fs = require('fs');
 const run = require('gulp-run');
 const dateTime = require('node-datetime');
@@ -22,11 +22,11 @@ const pm_file_path_full_dist = path.join(pm_file_path_dist, pm_file);
 const pm_bundle_path = path.join(pm_file_path, pm_name);
 
 /**
- * 
+ *
  * Array of directories relative to pm_bundle_path where static files will be served
- * 
+ *
  * If no static files need to be served, set static_relative_path = []
- * 
+ *
  */
 const static_relative_path = ['artwork'];
 
@@ -39,7 +39,7 @@ if(static_relative_path.length) {
 console.log(release_filename);
 console.log(pm_file_path_full_dist);
 
-gulp.task('static', ()=>{
+function static( cb ) {
     if(static_absolute_path.length) {
         let spec_body = JSON.stringify({
             get: {
@@ -92,7 +92,7 @@ gulp.task('static', ()=>{
             }
         }, null, 2);
 
-        return gulp.src(static_absolute_path)
+        return src(static_absolute_path)
             .pipe(new stream.Transform({
                 objectMode: true,
                 transform: (file, unused, cb) => {
@@ -120,12 +120,15 @@ gulp.task('static', ()=>{
                 this.emit('data', file);
                 this.end();
             })
-            .pipe(gulp.dest(pm_bundle_path));
+            .pipe(dest(pm_bundle_path));
     }
-});
+    else {
+        cb();
+    }
+};
 
-gulp.task('build', ['static'], () => {
-    run(`
+function build() {
+    return run(`
         mkdir dist ;
         cp -r Koha dist/. ;
         sed -i -e "s/{VERSION}/${package_json.version}/g" ${pm_file_path_full_dist} ;
@@ -135,12 +138,7 @@ gulp.task('build', ['static'], () => {
         cd .. ;
         rm -rf dist ;
     `).exec();
+};
 
-});
-
-gulp.task('release', () => {
-    gulp.src(release_filename)
-        .pipe(release({
-            manifest: require('./package.json') // package.json from which default values will be extracted if they're missing
-        }));
-});
+exports.static = static;
+exports.build  = series( static, build );
