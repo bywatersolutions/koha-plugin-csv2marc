@@ -33,8 +33,13 @@
     </form>
 
     <div>
+      <p>
         Add a line for each tag you'd like to create. In that tag you can have multiple subfields that should be created and the column index to be used.
         Repeatable fields require the use of underscore on the tag number as shown in this example configuration.
+      </p>
+      <p>
+        <strong>NOTE:</strong> The spreadsheet columns count start from 0. Meaning the second column is number 1, and so on.
+      </p>
         <h3>Example:</h3>
         <pre>
 003:
