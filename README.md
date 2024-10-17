@@ -37,9 +37,9 @@ If you want to install a newer version of the plugin, just repeat the install st
 On the plugin configuration page, you will find a form in which you need to add your mappings before using the plugin.
 
 Add a line for each tag you'd like to create. In that tag you can have multiple subfields that should be created and the column index to be used.
-NOTE: Columns indexes begin at 0
+NOTE: Columns indexes begin at 0.
 
-Repeatable fields require the use of underscore on the tag number as shown in this example configuration. Notice the example makes 650s be created using the same columns several times (for indicators and source). Remember to add _required: true_ the not-reused subfield (the main heading in the example). This way only meaningful fields will be created (you will notice if you are dealing with multiple repeated fields).
+Repeatable fields require the use of underscore on the tag number as shown in this example configuration. Notice the example makes 650 fields be created reusing the column for indicators and source. Remember to add _required: true_ the not-reused subfield (the main heading in the example). This is needed to prevent creating fields if the main subfield is not present on the spreadsheet.
 
 Control fields are supported! It is recommended that you put a default value for the control field in a column (configured as position 0), and then define the positions mappings. See _000_ in the example below.
 
@@ -47,46 +47,46 @@ Control fields are supported! It is recommended that you put a default value for
 
 ```
 000:
-  - column: 1
+  - column: 0
     position: 0
-  - column: 2
+  - column: 1
     position: 7
-  - column: 3
+  - column: 2
     position: 15
 003:
-  - column: 4
+  - column: 3
 008:
-  - column: 5
+  - column: 4
     position: 6
-  - column: 6
+  - column: 5
     position: 7
-  - column: 7
+  - column: 6
     position: 15
-  - column: 8
+  - column: 7
     position: 35
 100:
   - subfield: a
-    column: 9
+    column: 8
 245:
   - indicator: 1
-    column: 10
+    column: 9
   - indicator: 2
-    column: 11
+    column: 10
   - subfield: a
-    column: 12
+    column: 11
 650_1:
   - indicator: 2
-    column: 13
+    column: 12
   - subfield: 2
-    column: 14
+    column: 13
   - subfield: a
-    column: 15
+    column: 14
     required: true
 650_2:
   - indicator: 2
-    column: 13
+    column: 12
   - subfield: 2
-    column: 14
+    column: 15
   - subfield: a
     column: 16
     required: true

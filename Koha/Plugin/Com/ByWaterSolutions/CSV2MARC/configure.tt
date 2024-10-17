@@ -35,47 +35,58 @@
     </form>
 
     <div>
+      <p>
         Add a line for each tag you'd like to create. In that tag you can have multiple subfields that should be created and the column index to be used.
+        <strong>NOTE</strong>: Columns indexes begin at 0.
         Repeatable fields require the use of underscore on the tag number as shown in this example configuration.
+      </p>
+
         <h3>Example:</h3>
         <pre>
-003:
-  - column: 14
-008:
-  - column: 15
-    position: 6
-  - column: 16
+000:
+  - column: 0
+    position: 0
+  - column: 1
     position: 7
-  - column: 17
+  - column: 2
     position: 15
-  - column: 18
+003:
+  - column: 3
+008:
+  - column: 4
+    position: 6
+  - column: 5
+    position: 7
+  - column: 6
+    position: 15
+  - column: 7
     position: 35
-020:
-  - subfield: c
-    column: 6
-  - subfield: a
-    column: 35
 100:
   - subfield: a
-    column: 3
+    column: 8
 245:
-  - subfield: a
-    column: 2
   - indicator: 1
-    column: 4
+    column: 9
   - indicator: 2
-    column: 5
-260:
-  - subfield: b
-    column: 7
-  - subfield: c
+    column: 10
+  - subfield: a
     column: 11
 650_1:
-  - subfield: a
+  - indicator: 2
     column: 12
-650_2:
-  - subfield: a
+  - subfield: 2
     column: 13
+  - subfield: a
+    column: 14
+    required: true
+650_2:
+  - indicator: 2
+    column: 12
+  - subfield: 2
+    column: 15
+  - subfield: a
+    column: 16
+    required: true
         </pre>
 
     </div>
