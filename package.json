@@ -4,8 +4,8 @@
   "previous_version": "3.2.0",
   "description": "Koha CSV to MARC Plugin",
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-cli": "^1.2.2",
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.3.0",
     "gulp-github-release": "^1.1.5",
     "gulp-run": "^1.7.1"
   },
@@ -25,7 +25,7 @@
   "dependencies": {
     "datetime": "0.0.3",
     "gulp-replace": "^0.6.1",
-    "jsonfile": "^4.0.0",
+    "jsonfile": "^5.0.0",
     "node-datetime": "^2.0.0"
   }
 }
